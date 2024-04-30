@@ -26,12 +26,14 @@ async function run() {
 
     const spotCollection = client.db("spotDB").collection("spot");
 
+    // load all spot
     app.get("/spot", async (req, res) => {
       const cursor = spotCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
 
+    // view details spot
     app.get("/spot/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -39,18 +41,37 @@ async function run() {
       res.send(result);
     });
 
+    // add spot
     app.post("/spot", async (req, res) => {
       const newSpot = req.body;
       const result = await spotCollection.insertOne(newSpot);
       res.send(result);
     });
 
-    // app.delete("/spot/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) };
-    //   const result = await spotCollection.deleteOne(query);
-    //   res.send(result);
-    // });
+    // update spot
+    app.put("/spot/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedSpot = req.body;
+      const spot = {
+        $set: {
+          spotName: updatedSpot.spotName,
+          photo: updatedSpot.photo,
+          description: updatedSpot.description,
+          country: updatedSpot.country,
+          location: updatedSpot.location,
+          cost: updatedSpot.cost,
+          season: updatedSpot.season,
+          travel: updatedSpot.travel,
+          visitors: updatedSpot.visitors,
+        },
+      };
+      const result = await spotCollection.updateOne(filter, spot, options);
+      res.send(result);
+    });
+
+    //    delete spot
     app.delete("/spot/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
