@@ -26,14 +26,14 @@ async function run() {
 
     const spotCollection = client.db("spotDB").collection("spot");
 
-    // load all spot
+    // load  spots
     app.get("/spot", async (req, res) => {
       const cursor = spotCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
 
-    // view details spot
+    // details spot
     app.get("/spot/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -84,7 +84,6 @@ async function run() {
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
   } finally {
-    // Ensures that the client will close when you finish/error
     // await client.close();
   }
 }
